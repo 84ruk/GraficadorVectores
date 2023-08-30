@@ -53,68 +53,69 @@ def plot_vectors_3d(vectors):
 
     plt.show()
 
+def add_vectors(vector1, vector2):
+    return [vector1[i] + vector2[i] for i in range(len(vector1))]
+
+def subtract_vectors(vector1, vector2):
+    return [vector1[i] - vector2[i] for i in range(len(vector1))]
+
+def scalar_multiply(vector, scalar):
+    return [scalar * component for component in vector]
+
+def dot_product(vector1, vector2):
+    return sum(vector1[i] * vector2[i] for i in range(len(vector1)))
+
 def main():
     num_vectors = int(input("Ingrese la cantidad de vectores: "))
     vectors = []  # Lista para almacenar los vectores
 
         
     dimension = int(input("Ingrese el número de dimensiones (2 o 3): "))
-
-
-
-
-
-    def add_vectors(vector1, vector2):
-        return [vector1[0] + vector2[0], vector1[1] + vector2[1]]
-
-    def subtract_vectors(vector1, vector2):
-        return [vector1[0] - vector2[0], vector1[1] - vector2[1]]
-
-    def scalar_multiply(vector, scalar):
-        return [scalar * vector[0], scalar * vector[1]]
-
-    def dot_product(vector1, vector2):
-        return vector1[0] * vector2[0] + vector1[1] * vector2[1]
-
-    
-
-    
-
-    if dimension == 2:
-
-        # Pedir al usuario los componentes de cada vector
-        for i in range(num_vectors):
-            print(f"Vector {i + 1}:")
-            vector_x = float(input("Ingrese el componente X del vector: "))
-            vector_y = float(input("Ingrese el componente Y del vector: "))
-            vectors.append([vector_x, vector_y])
-
-        # Mostrar los vectores ingresados
-        print("Vectores ingresados:")
-        for i, vector in enumerate(vectors):
-            print(f"Vector {i + 1}: {vector}")
-
-        plot_vectors(vectors)
-        
-    elif dimension == 3:
-                # Pedir al usuario los componentes de cada vector
-        for i in range(num_vectors):
-            print(f"Vector {i + 1}:")
-            vector_x = float(input("Ingrese el componente X del vector: "))
-            vector_y = float(input("Ingrese el componente Y del vector: "))
-            vector_z = float(input("Ingrese el componente Z del vector: "))
-            vectors.append([vector_x, vector_y, vector_z])
-            
-        # Mostrar los vectores ingresados
-        print("Vectores ingresados:")
-        for i, vector in enumerate(vectors):
-            print(f"Vector {i + 1}: {vector}")
-
-        plot_vectors_3d(vectors) 
-
-    else:
+    if dimension not in (2, 3):
         print("Dimensiones no válidas. Debe ser 2 o 3.")
         return
+
+    for i in range(num_vectors):
+        print(f"Vector {i + 1}:")
+        vector = []
+        for j in range(dimension):
+            component_label = chr(ord('X') + j)
+            component = float(input(f"Ingrese el componente {component_label} del vector: "))
+            vector.append(component)
+        vectors.append(vector)
+
+    tipo_operacion = int(input("Ingrese el tipo de operación que desea realizar:\n1. Suma de vectores.\n2. Resta de vectores.\n3. Producto escalar.\n4. Producto punto.\nOtro. Salir."))
+
+    if tipo_operacion in (1, 2, 3, 4):
+        vector_func = {1: add_vectors, 2: subtract_vectors, 3: scalar_multiply, 4: dot_product}
+        if tipo_operacion == 3:
+            scalar = float(input("Ingrese el valor del escalar: "))
+            result = [vector_func[tipo_operacion](vector, scalar) for vector in vectors]
+        elif tipo_operacion == 4 and len(vectors) == 2:
+            result = vector_func[tipo_operacion](vectors[0], vectors[1])
+        elif tipo_operacion == 1 or tipo_operacion == 2:
+            if dimension == 2:
+                result = vector_func[tipo_operacion](vectors[0], vectors[1])
+            elif dimension == 3:
+                if tipo_operacion == 1:
+                    result = add_vectors(vectors[0], vectors[1])
+                elif tipo_operacion == 2:
+                    result = subtract_vectors(vectors[0], vectors[1])
+        else:
+            print("Operación no válida para los vectores proporcionados.")
+            return
+
+        print("Resultado de la operación:", result)
+
+        if dimension == 2:
+            print("Vectores originales:", vectors)
+            plot_vectors(vectors + [result])
+        elif dimension == 3:
+            print("Vectores originales:", vectors)
+            plot_vectors_3d(vectors + [result])
+
+    else:
+        print("Operación no válida.")
 
 if __name__ == "__main__":
     main()
